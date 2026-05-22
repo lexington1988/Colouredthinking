@@ -29,12 +29,14 @@
       <option value="Edward Johnson">Edward Johnson</option>
       <option value="Gary Hall">Gary Hall</option>
       <option value="Graham Black">Graham Black</option>
-      <option value="Scott Griffiths">Scott Griffiths</option>
+      <option value="Harrison Daly">Harrison Daly</option>
       <option value="John Turlington">John Turlington</option>
       <option value="Joshua Porter">Joshua Porter</option>
       <option value="Paul Teece">Paul Teece</option>
       <option value="Peter Topliss">Peter Topliss</option>
       <option value="Renjie Chen">Renjie Chen</option>
+      <option value="Sam Ogejo">Sam Ogejo</option>
+      <option value="Scott Griffiths">Scott Griffiths</option>
       <option value="Sohail Mahmood">Sohail Mahmood</option>
     </select>
     <div id="engineerWarning" class="engineer-warning">
@@ -813,9 +815,9 @@
   }
 
   function saveProgress() {
-  // Progress is intentionally not saved.
-  // Each page load starts a fresh survey.
-}
+    localStorage.setItem("colouredThinkingAnswers", JSON.stringify(answers));
+    localStorage.setItem("colouredThinkingEngineer", getSelectedEngineer());
+  }
 
   function loadSaved() {
     try {
