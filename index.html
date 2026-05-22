@@ -1,4 +1,363 @@
+<div class="container">
+  <h1>Coloured Thinking</h1>
 
+  <section class="instructions">
+    <strong>Instructions:</strong><br>
+    First select the engineer completing the survey. The survey numbers will stay locked until an engineer is selected.
+    <br><br>
+    For each row, rank the four word groups from <strong>1 to 4</strong>.
+    Use each number <strong>once only</strong> in every row.
+    <br><br>
+    <strong>Every row must contain one 1, one 2, one 3 and one 4. Each row must total 10.</strong>
+
+    <div class="legend">
+      <div>4 = Most like you</div>
+      <div>3 = Quite like you</div>
+      <div>2 = Slightly like you</div>
+      <div>1 = Least like you</div>
+    </div>
+  </section>
+
+  <section class="engineer-box">
+    <label for="engineerSelect">Engineer completing this survey</label>
+    <select id="engineerSelect">
+      <option value="">Select engineer...</option>
+      <option value="Benn Pellington">Benn Pellington</option>
+      <option value="Bhupinder Singh">Bhupinder Singh</option>
+      <option value="Brian West">Brian West</option>
+      <option value="Charles Abraham">Charles Abraham</option>
+      <option value="Edward Johnson">Edward Johnson</option>
+      <option value="Gary Hall">Gary Hall</option>
+      <option value="Graham Black">Graham Black</option>
+      <option value="Scott Griffiths">Scott Griffiths</option>
+      <option value="John Turlington">John Turlington</option>
+      <option value="Joshua Porter">Joshua Porter</option>
+      <option value="Paul Teece">Paul Teece</option>
+      <option value="Peter Topliss">Peter Topliss</option>
+      <option value="Renjie Chen">Renjie Chen</option>
+      <option value="Sohail Mahmood">Sohail Mahmood</option>
+    </select>
+    <div id="engineerWarning" class="engineer-warning">
+      ⚠️ Please select an engineer before completing the survey.
+    </div>
+  </section>
+
+  <div id="survey"></div>
+
+  <section class="totals">
+    <h2>Column Totals</h2>
+
+    <div class="total-grid">
+      <div class="total-box red-total">
+        <div class="total-label">Column 1</div>
+        <div class="total-value" id="total-0">0</div>
+      </div>
+
+      <div class="total-box yellow-total">
+        <div class="total-label">Column 2</div>
+        <div class="total-value" id="total-1">0</div>
+      </div>
+
+      <div class="total-box blue-total">
+        <div class="total-label">Column 3</div>
+        <div class="total-value" id="total-2">0</div>
+      </div>
+
+      <div class="total-box green-total">
+        <div class="total-label">Column 4</div>
+        <div class="total-value" id="total-3">0</div>
+      </div>
+    </div>
+  </section>
+
+  <p id="main-message" class="message">Select an engineer to unlock the survey.</p>
+
+  <div class="controls">
+    <button class="control-btn" onclick="sendSurvey()">Send</button>
+    <button class="control-btn secondary" onclick="window.print()">Print / Save as PDF</button>
+    <button class="control-btn danger" onclick="resetSurvey()">Reset</button>
+  </div>
+</div>
+
+<style>
+  :root {
+    --primary: #5e4b8b;
+    --primary-dark: #47386f;
+    --ok: #1f8f4d;
+    --warn: #c0392b;
+    --border: #b8b8b8;
+    --bg: #f6f4fb;
+    --card: #ffffff;
+    --text: #222;
+    --muted: #666;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    padding: 18px;
+  }
+
+  h1 {
+    margin: 0 0 12px;
+    color: var(--primary);
+    font-size: 28px;
+    text-align: center;
+  }
+
+  .instructions {
+    background: #eeeeee;
+    border-left: 6px solid var(--primary);
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    line-height: 1.45;
+    font-size: 15px;
+  }
+
+  .instructions strong {
+    color: var(--primary-dark);
+  }
+
+  .legend {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .legend div {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .engineer-box {
+    background: #ffffff;
+    border: 2px solid var(--primary);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+
+  .engineer-box label {
+    display: block;
+    font-weight: bold;
+    color: var(--primary-dark);
+    margin-bottom: 8px;
+    font-size: 17px;
+  }
+
+  .engineer-box select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #999;
+    border-radius: 10px;
+    font-size: 16px;
+    background: white;
+  }
+
+  .engineer-warning {
+    margin-top: 8px;
+    color: var(--warn);
+    font-weight: bold;
+    display: none;
+  }
+
+  .row-card {
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    background: white;
+  }
+
+  .row-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    background: #f2f2f2;
+    border-bottom: 1px solid var(--border);
+    font-weight: bold;
+  }
+
+  .row-title {
+    font-size: 18px;
+    color: var(--primary-dark);
+  }
+
+  .row-status {
+    padding: 7px 10px;
+    border-radius: 999px;
+    font-size: 14px;
+    background: #fff3cd;
+    color: #7a5a00;
+    border: 1px solid #e0c36d;
+    white-space: nowrap;
+  }
+
+  .row-status.complete {
+    background: #dff3e6;
+    color: var(--ok);
+    border-color: #9bd2ad;
+  }
+
+  .row-status.error {
+    background: #f9dddd;
+    color: var(--warn);
+    border-color: #e3a2a2;
+  }
+
+  .groups {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .group {
+    padding: 14px;
+    border-right: 1px solid var(--border);
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .group:last-child {
+    border-right: none;
+  }
+
+  .words {
+    min-height: 58px;
+    font-size: 14px;
+    line-height: 1.35;
+    color: #333;
+  }
+
+  .rating-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  button.rating {
+    min-height: 42px;
+    border: 2px solid var(--primary);
+    background: white;
+    color: var(--primary);
+    border-radius: 9px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  button.rating:hover {
+    background: #f0ebff;
+  }
+
+  button.rating.selected {
+    background: var(--primary);
+    color: white;
+  }
+
+  button.rating.used,
+  button.rating:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+    border-color: #aaa;
+    color: #777;
+  }
+
+  button.rating.selected.used {
+    opacity: 1;
+    cursor: pointer;
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+
+  button.rating.locked {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .totals {
+    margin-top: 18px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .totals h2 {
+    margin: 0;
+    background: #f2f2f2;
+    color: var(--primary-dark);
+    padding: 12px;
+    font-size: 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .total-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .total-box {
+    padding: 24px 14px;
+    text-align: center;
+    border-right: 2px solid #ffffff;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .total-box:last-child {
+    border-right: none;
+  }
+
+  .red-total {
+    background: #d71920;
+    color: white;
+  }
+
+  .yellow-total {
+    background: #ffd700;
+    color: #111;
+  }
+
+  .blue-total {
+    background: #0057b8;
+    color: white;
+  }
+
+  .green-total {
+    background: #138a36;
+    color: white;
+  }
 
   .total-label {
     font-size: 18px;
