@@ -1,883 +1,863 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Coloured Thinking Survey</title>
+<div class="container">
+  <h1>Coloured Thinking</h1>
 
-  <style>
-    :root {
-      --primary: #5e4b8b;
-      --primary-dark: #47386f;
-      --ok: #1f8f4d;
-      --warn: #c0392b;
-      --border: #b8b8b8;
-      --bg: #f6f4fb;
-      --card: #ffffff;
-      --text: #222222;
-      --muted: #666666;
-    }
+  <section class="instructions">
+    <strong>Instructions:</strong><br>
+    First select the engineer completing the survey. The survey numbers will stay locked until an engineer is selected.
+    <br><br>
+    For each row, rank the four word groups from <strong>1 to 4</strong>.
+    Use each number <strong>once only</strong> in every row.
+    <br><br>
+    <strong>Every row must contain one 1, one 2, one 3 and one 4. Each row must total 10.</strong>
 
-    * {
-      box-sizing: border-box;
-    }
+    <div class="legend">
+      <div>4 = Most like you</div>
+      <div>3 = Quite like you</div>
+      <div>2 = Slightly like you</div>
+      <div>1 = Least like you</div>
+    </div>
+  </section>
 
+  <section class="engineer-box">
+    <label for="engineerSelect">Engineer completing this survey</label>
+    <select id="engineerSelect">
+      <option value="">Select engineer...</option>
+      <option value="Benn Pellington">Benn Pellington</option>
+      <option value="Bhupinder Singh">Bhupinder Singh</option>
+      <option value="Brian West">Brian West</option>
+      <option value="Charles Abraham">Charles Abraham</option>
+      <option value="Edward Johnson">Edward Johnson</option>
+      <option value="Gary Hall">Gary Hall</option>
+      <option value="Graham Black">Graham Black</option>
+      <option value="Scott Griffiths">Scott Griffiths</option>
+      <option value="John Turlington">John Turlington</option>
+      <option value="Joshua Porter">Joshua Porter</option>
+      <option value="Paul Teece">Paul Teece</option>
+      <option value="Peter Topliss">Peter Topliss</option>
+      <option value="Renjie Chen">Renjie Chen</option>
+      <option value="Sohail Mahmood">Sohail Mahmood</option>
+    </select>
+    <div id="engineerWarning" class="engineer-warning">
+      ⚠️ Please select an engineer before completing the survey.
+    </div>
+  </section>
+
+  <div id="survey"></div>
+
+  <section class="totals">
+    <h2>Column Totals</h2>
+
+    <div class="total-grid">
+      <div class="total-box red-total">
+        <div class="total-label">Column 1</div>
+        <div class="total-value" id="total-0">0</div>
+      </div>
+
+      <div class="total-box yellow-total">
+        <div class="total-label">Column 2</div>
+        <div class="total-value" id="total-1">0</div>
+      </div>
+
+      <div class="total-box blue-total">
+        <div class="total-label">Column 3</div>
+        <div class="total-value" id="total-2">0</div>
+      </div>
+
+      <div class="total-box green-total">
+        <div class="total-label">Column 4</div>
+        <div class="total-value" id="total-3">0</div>
+      </div>
+    </div>
+  </section>
+
+  <p id="main-message" class="message">Select an engineer to unlock the survey.</p>
+
+  <div class="controls">
+    <button class="control-btn" onclick="sendSurvey()">Send</button>
+    <button class="control-btn secondary" onclick="window.print()">Print / Save as PDF</button>
+    <button class="control-btn danger" onclick="resetSurvey()">Reset</button>
+  </div>
+</div>
+
+<style>
+  :root {
+    --primary: #5e4b8b;
+    --primary-dark: #47386f;
+    --ok: #1f8f4d;
+    --warn: #c0392b;
+    --border: #b8b8b8;
+    --bg: #f6f4fb;
+    --card: #ffffff;
+    --text: #222;
+    --muted: #666;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    padding: 18px;
+  }
+
+  h1 {
+    margin: 0 0 12px;
+    color: var(--primary);
+    font-size: 28px;
+    text-align: center;
+  }
+
+  .instructions {
+    background: #eeeeee;
+    border-left: 6px solid var(--primary);
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    line-height: 1.45;
+    font-size: 15px;
+  }
+
+  .instructions strong {
+    color: var(--primary-dark);
+  }
+
+  .legend {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .legend div {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .engineer-box {
+    background: #ffffff;
+    border: 2px solid var(--primary);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+
+  .engineer-box label {
+    display: block;
+    font-weight: bold;
+    color: var(--primary-dark);
+    margin-bottom: 8px;
+    font-size: 17px;
+  }
+
+  .engineer-box select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #999;
+    border-radius: 10px;
+    font-size: 16px;
+    background: white;
+  }
+
+  .engineer-warning {
+    margin-top: 8px;
+    color: var(--warn);
+    font-weight: bold;
+    display: none;
+  }
+
+  .row-card {
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    background: white;
+  }
+
+  .row-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    background: #f2f2f2;
+    border-bottom: 1px solid var(--border);
+    font-weight: bold;
+  }
+
+  .row-title {
+    font-size: 18px;
+    color: var(--primary-dark);
+  }
+
+  .row-status {
+    padding: 7px 10px;
+    border-radius: 999px;
+    font-size: 14px;
+    background: #fff3cd;
+    color: #7a5a00;
+    border: 1px solid #e0c36d;
+    white-space: nowrap;
+  }
+
+  .row-status.complete {
+    background: #dff3e6;
+    color: var(--ok);
+    border-color: #9bd2ad;
+  }
+
+  .row-status.error {
+    background: #f9dddd;
+    color: var(--warn);
+    border-color: #e3a2a2;
+  }
+
+  .groups {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .group {
+    padding: 14px;
+    border-right: 1px solid var(--border);
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .group:last-child {
+    border-right: none;
+  }
+
+  .words {
+    min-height: 58px;
+    font-size: 14px;
+    line-height: 1.35;
+    color: #333;
+  }
+
+  .rating-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  button.rating {
+    min-height: 42px;
+    border: 2px solid var(--primary);
+    background: white;
+    color: var(--primary);
+    border-radius: 9px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  button.rating:hover {
+    background: #f0ebff;
+  }
+
+  button.rating.selected {
+    background: var(--primary);
+    color: white;
+  }
+
+  button.rating.used,
+  button.rating:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+    border-color: #aaa;
+    color: #777;
+  }
+
+  button.rating.selected.used {
+    opacity: 1;
+    cursor: pointer;
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+
+  button.rating.locked {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .totals {
+    margin-top: 18px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .totals h2 {
+    margin: 0;
+    background: #f2f2f2;
+    color: var(--primary-dark);
+    padding: 12px;
+    font-size: 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .total-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .total-box {
+    padding: 24px 14px;
+    text-align: center;
+    border-right: 2px solid #ffffff;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .total-box:last-child {
+    border-right: none;
+  }
+
+  .red-total {
+    background: #d71920;
+    color: white;
+  }
+
+  .yellow-total {
+    background: #ffd700;
+    color: #111;
+  }
+
+  .blue-total {
+    background: #0057b8;
+    color: white;
+  }
+
+  .green-total {
+    background: #138a36;
+    color: white;
+  }
+
+  .total-label {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 10px;
+  }
+
+  .total-value {
+    font-size: 48px;
+    line-height: 1;
+    font-weight: 900;
+  }
+
+  .message {
+    text-align: center;
+    font-weight: bold;
+    margin: 12px 0 0;
+    color: var(--muted);
+  }
+
+  .message.ok {
+    color: var(--ok);
+  }
+
+  .message.error {
+    color: var(--warn);
+  }
+
+  .controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 18px 0;
+  }
+
+  .control-btn {
+    border: none;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background: var(--primary);
+    color: white;
+  }
+
+  .control-btn.secondary {
+    background: #555;
+  }
+
+  .control-btn.danger {
+    background: var(--warn);
+  }
+
+  @media (max-width: 850px) {
     body {
-      margin: 0;
-      padding: 16px;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      padding: 8px;
     }
 
     .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      background: var(--card);
-      border-radius: 14px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-      padding: 18px;
+      padding: 12px;
     }
 
     h1 {
-      margin: 0 0 12px;
-      color: var(--primary);
-      font-size: 28px;
-      text-align: center;
-    }
-
-    .instructions {
-      background: #eeeeee;
-      border-left: 6px solid var(--primary);
-      padding: 14px;
-      border-radius: 10px;
-      margin-bottom: 16px;
-      line-height: 1.45;
-      font-size: 15px;
-    }
-
-    .instructions strong {
-      color: var(--primary-dark);
+      font-size: 24px;
     }
 
     .legend {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .legend div {
-      background: white;
-      border: 1px solid #dddddd;
-      border-radius: 8px;
-      padding: 8px;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    .engineer-box {
-      background: #ffffff;
-      border: 2px solid var(--primary);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 16px;
-    }
-
-    .engineer-box label {
-      display: block;
-      font-weight: bold;
-      color: var(--primary-dark);
-      margin-bottom: 8px;
-      font-size: 17px;
-    }
-
-    .engineer-box select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #999999;
-      border-radius: 10px;
-      font-size: 16px;
-      background: white;
-    }
-
-    .engineer-warning {
-      margin-top: 8px;
-      color: var(--warn);
-      font-weight: bold;
-      display: none;
-    }
-
-    .row-card {
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      margin-bottom: 16px;
-      background: white;
-    }
-
-    .row-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 14px;
-      background: #f2f2f2;
-      border-bottom: 1px solid var(--border);
-      font-weight: bold;
-    }
-
-    .row-title {
-      font-size: 18px;
-      color: var(--primary-dark);
-    }
-
-    .row-status {
-      padding: 7px 10px;
-      border-radius: 999px;
-      font-size: 14px;
-      background: #fff3cd;
-      color: #7a5a00;
-      border: 1px solid #e0c36d;
-      white-space: nowrap;
-    }
-
-    .row-status.complete {
-      background: #dff3e6;
-      color: var(--ok);
-      border-color: #9bd2ad;
-    }
-
-    .row-status.error {
-      background: #f9dddd;
-      color: var(--warn);
-      border-color: #e3a2a2;
+      grid-template-columns: 1fr 1fr;
     }
 
     .groups {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: 1fr;
     }
 
     .group {
-      padding: 14px;
-      border-right: 1px solid var(--border);
-      min-height: 150px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 14px;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      min-height: auto;
     }
 
     .group:last-child {
-      border-right: none;
+      border-bottom: none;
     }
 
     .words {
-      min-height: 58px;
-      font-size: 14px;
-      line-height: 1.35;
-      color: #333333;
+      min-height: auto;
+      font-size: 15px;
     }
 
-    .rating-buttons {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
+    .row-header {
+      flex-direction: column;
+      align-items: flex-start;
     }
 
-    button.rating {
-      min-height: 42px;
-      border: 2px solid var(--primary);
-      background: white;
-      color: var(--primary);
-      border-radius: 9px;
-      font-size: 17px;
-      font-weight: bold;
-      cursor: pointer;
-      touch-action: manipulation;
-    }
-
-    button.rating:hover {
-      background: #f0ebff;
-    }
-
-    button.rating.selected {
-      background: var(--primary);
-      color: white;
-    }
-
-    button.rating.used,
-    button.rating:disabled {
-      opacity: 0.25;
-      cursor: not-allowed;
-      border-color: #aaaaaa;
-      color: #777777;
-    }
-
-    button.rating.selected.used {
-      opacity: 1;
-      cursor: pointer;
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-
-    button.rating.locked {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-
-    .totals {
-      margin-top: 18px;
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    .totals h2 {
-      margin: 0;
-      background: #f2f2f2;
-      color: var(--primary-dark);
-      padding: 12px;
-      font-size: 20px;
-      text-align: center;
-      border-bottom: 1px solid var(--border);
+    .row-status {
+      white-space: normal;
     }
 
     .total-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: 1fr;
     }
 
     .total-box {
-      padding: 24px 14px;
-      text-align: center;
-      border-right: 2px solid #ffffff;
-      min-height: 150px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: #111111;
+      border-right: none;
+      border-bottom: 2px solid white;
     }
 
     .total-box:last-child {
-      border-right: none;
+      border-bottom: none;
+    }
+  }
+
+  @media print {
+    body {
+      background: white;
+      padding: 0;
     }
 
-    .red-total {
-      background: #d71920;
-      color: white;
-    }
-
-    .yellow-total {
-      background: #ffd700;
-      color: #111111;
-    }
-
-    .blue-total {
-      background: #0057b8;
-      color: white;
-    }
-
-    .green-total {
-      background: #138a36;
-      color: white;
-    }
-
-    .total-label {
-      font-size: 18px;
-      font-weight: 800;
-      margin-bottom: 10px;
-      color: inherit;
-    }
-
-    .total-value {
-      font-size: 48px;
-      line-height: 1;
-      font-weight: 900;
-      color: inherit;
-    }
-
-    .message {
-      text-align: center;
-      font-weight: bold;
-      margin: 12px 0 0;
-      color: var(--muted);
-    }
-
-    .message.ok {
-      color: var(--ok);
-    }
-
-    .message.error {
-      color: var(--warn);
+    .container {
+      box-shadow: none;
+      border-radius: 0;
     }
 
     .controls {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin: 18px 0;
+      display: none;
     }
 
-    .control-btn {
-      border: none;
-      border-radius: 10px;
-      padding: 12px 16px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      background: var(--primary);
-      color: white;
+    button.rating {
+      border-color: #444;
     }
 
-    .control-btn.secondary {
-      background: #555555;
+    button.rating.used:not(.selected) {
+      opacity: 0.1;
     }
+  }
+</style>
 
-    .control-btn.danger {
-      background: var(--warn);
-    }
+<script>
+  const resultsEmailAddress = "alexxii.ludford-hryniw@platformhg.com";
 
-    @media (max-width: 850px) {
-      body {
-        padding: 8px;
-      }
+  const rows = [
+    [
+      "Spontaneous<br>Impulsive<br>Impetuous",
+      "Stable<br>Methodical<br>Planner",
+      "Co-operative<br>Idealistic<br>Wants harmony",
+      "Rational<br>Complex<br>Curious"
+    ],
+    [
+      "Adventurous<br>Daring<br>In a hurry",
+      "Traditional<br>Responsible<br>Dependable",
+      "Catalyst<br>Compassionate<br>Inspirational",
+      "Logical<br>Analytical<br>Loner"
+    ],
+    [
+      "Love excitement<br>Explorer<br>Unpredictable",
+      "Dutiful<br>Teacher<br>Industrious",
+      "Authentic<br>Empathic<br>Motivator",
+      "Intellectual<br>Inventive<br>Problem solver"
+    ],
+    [
+      "Energetic<br>Expedient<br>Jokester",
+      "Makes rules<br>Orderly<br>Prepares",
+      "Supportive<br>Self-aware<br>Caring",
+      "System-thinking<br>Independent<br>Perfectionist"
+    ],
+    [
+      "Bold<br>Witty<br>Risk-taker",
+      "Loyal<br>Reliable<br>Likes structure",
+      "Romantic<br>Flexible<br>Self-actualising",
+      "Theoretical<br>Ingenious<br>Individualist"
+    ]
+  ];
 
-      .container {
-        padding: 12px;
-      }
+  const answers = rows.map(() => [null, null, null, null]);
 
-      h1 {
-        font-size: 24px;
-      }
+  function getSelectedEngineer() {
+    return document.getElementById("engineerSelect").value;
+  }
 
-      .legend {
-        grid-template-columns: 1fr 1fr;
-      }
+  function engineerSelected() {
+    return getSelectedEngineer() !== "";
+  }
 
-      .groups {
-        grid-template-columns: 1fr;
-      }
+  function showEngineerWarning() {
+    const warning = document.getElementById("engineerWarning");
+    warning.style.display = "block";
+    document.getElementById("engineerSelect").scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  }
 
-      .group {
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-        min-height: auto;
-      }
+  function createSurvey() {
+    const survey = document.getElementById("survey");
+    survey.innerHTML = "";
 
-      .group:last-child {
-        border-bottom: none;
-      }
+    rows.forEach((row, rowIndex) => {
+      const rowCard = document.createElement("section");
+      rowCard.className = "row-card";
 
-      .words {
-        min-height: auto;
-        font-size: 15px;
-      }
-
-      .row-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .row-status {
-        white-space: normal;
-      }
-
-      .total-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .total-box {
-        border-right: none;
-        border-bottom: 2px solid white;
-      }
-
-      .total-box:last-child {
-        border-bottom: none;
-      }
-    }
-
-    @media print {
-      body {
-        background: white;
-        padding: 0;
-      }
-
-      .container {
-        box-shadow: none;
-        border-radius: 0;
-      }
-
-      .controls {
-        display: none;
-      }
-
-      button.rating {
-        border-color: #444444;
-      }
-
-      button.rating.used:not(.selected) {
-        opacity: 0.1;
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <main class="container">
-    <h1>Coloured Thinking</h1>
-
-    <section class="instructions">
-      <strong>Instructions:</strong><br>
-      First select the engineer completing the survey. The survey numbers will stay locked until an engineer is selected.
-      <br><br>
-      For each row, rank the four word groups from <strong>1 to 4</strong>.
-      Use each number <strong>once only</strong> in every row.
-      <br><br>
-      <strong>Every row must contain one 1, one 2, one 3 and one 4. Each row must total 10.</strong>
-
-      <div class="legend">
-        <div>4 = Most like you</div>
-        <div>3 = Quite like you</div>
-        <div>2 = Slightly like you</div>
-        <div>1 = Least like you</div>
-      </div>
-    </section>
-
-    <section class="engineer-box">
-      <label for="engineerSelect">Engineer completing this survey</label>
-
-      <select id="engineerSelect">
-        <option value="">Select engineer...</option>
-        <option value="Benn Pellington">Benn Pellington</option>
-        <option value="Bhupinder Singh">Bhupinder Singh</option>
-        <option value="Brian West">Brian West</option>
-        <option value="Charles Abraham">Charles Abraham</option>
-        <option value="Edward Johnson">Edward Johnson</option>
-        <option value="Gary Hall">Gary Hall</option>
-        <option value="Graham Black">Graham Black</option>
-        <option value="Scott Griffiths">Scott Griffiths</option>
-        <option value="John Turlington">John Turlington</option>
-        <option value="Joshua Porter">Joshua Porter</option>
-        <option value="Paul Teece">Paul Teece</option>
-        <option value="Peter Topliss">Peter Topliss</option>
-        <option value="Renjie Chen">Renjie Chen</option>
-        <option value="Sohail Mahmood">Sohail Mahmood</option>
-      </select>
-
-      <div id="engineerWarning" class="engineer-warning">
-        ⚠️ Please select an engineer before completing the survey.
-      </div>
-    </section>
-
-    <div id="survey"></div>
-
-    <section class="totals">
-      <h2>Column Totals</h2>
-
-      <div class="total-grid">
-        <div class="total-box red-total">
-          <div class="total-label">Column 1</div>
-          <div class="total-value" id="total-0">0</div>
+      rowCard.innerHTML = `
+        <div class="row-header">
+          <div class="row-title">Row ${rowIndex + 1}</div>
+          <div class="row-status" id="status-${rowIndex}">Locked — select an engineer first</div>
         </div>
 
-        <div class="total-box yellow-total">
-          <div class="total-label">Column 2</div>
-          <div class="total-value" id="total-1">0</div>
+        <div class="groups">
+          ${row.map((words, colIndex) => `
+            <div class="group">
+              <div class="words">${words}</div>
+              <div class="rating-buttons">
+                ${[1, 2, 3, 4].map(value => `
+                  <button
+                    type="button"
+                    class="rating"
+                    data-row="${rowIndex}"
+                    data-col="${colIndex}"
+                    data-value="${value}"
+                    onclick="selectRating(${rowIndex}, ${colIndex}, ${value})"
+                  >
+                    ${value}
+                  </button>
+                `).join("")}
+              </div>
+            </div>
+          `).join("")}
         </div>
+      `;
 
-        <div class="total-box blue-total">
-          <div class="total-label">Column 3</div>
-          <div class="total-value" id="total-2">0</div>
-        </div>
+      survey.appendChild(rowCard);
+    });
 
-        <div class="total-box green-total">
-          <div class="total-label">Column 4</div>
-          <div class="total-value" id="total-3">0</div>
-        </div>
-      </div>
-    </section>
+    loadSaved();
+    updateDisplay();
+  }
 
-    <p id="main-message" class="message">Select an engineer to unlock the survey.</p>
-
-    <div class="controls">
-      <button class="control-btn" onclick="sendSurvey()">Send</button>
-      <button class="control-btn secondary" onclick="window.print()">Print / Save as PDF</button>
-      <button class="control-btn danger" onclick="resetSurvey()">Reset</button>
-    </div>
-  </main>
-
-  <script>
-    const resultsEmailAddress = "alexxii.ludford-hryniw@platformhg.com";
-
-    const rows = [
-      [
-        "Spontaneous<br>Impulsive<br>Impetuous",
-        "Stable<br>Methodical<br>Planner",
-        "Co-operative<br>Idealistic<br>Wants harmony",
-        "Rational<br>Complex<br>Curious"
-      ],
-      [
-        "Adventurous<br>Daring<br>In a hurry",
-        "Traditional<br>Responsible<br>Dependable",
-        "Catalyst<br>Compassionate<br>Inspirational",
-        "Logical<br>Analytical<br>Loner"
-      ],
-      [
-        "Love excitement<br>Explorer<br>Unpredictable",
-        "Dutiful<br>Teacher<br>Industrious",
-        "Authentic<br>Empathic<br>Motivator",
-        "Intellectual<br>Inventive<br>Problem solver"
-      ],
-      [
-        "Energetic<br>Expedient<br>Jokester",
-        "Makes rules<br>Orderly<br>Prepares",
-        "Supportive<br>Self-aware<br>Caring",
-        "System-thinking<br>Independent<br>Perfectionist"
-      ],
-      [
-        "Bold<br>Witty<br>Risk-taker",
-        "Loyal<br>Reliable<br>Likes structure",
-        "Romantic<br>Flexible<br>Self-actualising",
-        "Theoretical<br>Ingenious<br>Individualist"
-      ]
-    ];
-
-    const answers = rows.map(() => [null, null, null, null]);
-
-    function getSelectedEngineer() {
-      return document.getElementById("engineerSelect").value;
+  function selectRating(rowIndex, colIndex, value) {
+    if (!engineerSelected()) {
+      showEngineerWarning();
+      return;
     }
 
-    function engineerSelected() {
-      return getSelectedEngineer() !== "";
+    const currentValue = answers[rowIndex][colIndex];
+
+    if (currentValue === value) {
+      answers[rowIndex][colIndex] = null;
+      saveProgress();
+      updateDisplay();
+      return;
     }
 
-    function showEngineerWarning() {
-      const warning = document.getElementById("engineerWarning");
-      warning.style.display = "block";
+    if (answers[rowIndex].includes(value)) {
+      showRowError(
+        rowIndex,
+        `Number ${value} has already been used in this row. Use each number once only.`
+      );
+      return;
+    }
 
-      document.getElementById("engineerSelect").scrollIntoView({
+    answers[rowIndex][colIndex] = value;
+    saveProgress();
+    updateDisplay();
+  }
+
+  function updateDisplay() {
+    const hasEngineer = engineerSelected();
+
+    const warning = document.getElementById("engineerWarning");
+    warning.style.display = hasEngineer ? "none" : "block";
+
+    document.querySelectorAll("button.rating").forEach(button => {
+      const rowIndex = Number(button.dataset.row);
+      const colIndex = Number(button.dataset.col);
+      const value = Number(button.dataset.value);
+
+      const selectedValue = answers[rowIndex][colIndex];
+      const rowUsesValue = answers[rowIndex].includes(value);
+      const disabledByRow = rowUsesValue && selectedValue !== value;
+
+      button.classList.toggle("selected", selectedValue === value);
+      button.classList.toggle("used", disabledByRow);
+      button.classList.toggle("locked", !hasEngineer);
+      button.disabled = !hasEngineer || disabledByRow;
+    });
+
+    answers.forEach((row, rowIndex) => {
+      const status = document.getElementById(`status-${rowIndex}`);
+      const completed = row.every(value => value !== null);
+      const total = row.reduce((sum, value) => sum + (value || 0), 0);
+      const uniqueCount = new Set(row.filter(value => value !== null)).size;
+
+      status.classList.remove("complete", "error");
+
+      if (!hasEngineer) {
+        status.textContent = "Locked — select an engineer first";
+      } else if (!completed) {
+        status.textContent = `Incomplete — row total ${total}/10`;
+      } else if (total === 10 && uniqueCount === 4) {
+        status.textContent = "✅ Complete — row total 10/10";
+        status.classList.add("complete");
+      } else {
+        status.textContent = "⚠️ This row must use 1, 2, 3 and 4 once only";
+        status.classList.add("error");
+      }
+    });
+
+    updateTotals();
+    updateMainMessage();
+  }
+
+  function updateTotals() {
+    for (let col = 0; col < 4; col++) {
+      const total = answers.reduce((sum, row) => sum + (row[col] || 0), 0);
+      document.getElementById(`total-${col}`).textContent = total;
+    }
+  }
+
+  function updateMainMessage() {
+    const message = document.getElementById("main-message");
+    const completeRows = answers.filter(row => row.every(value => value !== null)).length;
+    const allComplete = completeRows === answers.length;
+
+    message.className = "message";
+
+    if (!engineerSelected()) {
+      message.textContent = "Select an engineer to unlock the survey.";
+      message.classList.add("error");
+    } else if (allComplete) {
+      message.textContent = "✅ Survey complete. Press Send to email the results.";
+      message.classList.add("ok");
+    } else {
+      message.textContent = `${completeRows}/5 rows complete. Each row must total 10.`;
+    }
+  }
+
+  function showRowError(rowIndex, text) {
+    const status = document.getElementById(`status-${rowIndex}`);
+    status.textContent = "⚠️ " + text;
+    status.classList.remove("complete");
+    status.classList.add("error");
+    setTimeout(updateDisplay, 1800);
+  }
+
+  function validateSurvey() {
+    if (!engineerSelected()) {
+      showEngineerWarning();
+      return false;
+    }
+
+    const incomplete = answers
+      .map((row, index) => ({ row, index }))
+      .filter(item => !item.row.every(value => value !== null));
+
+    const message = document.getElementById("main-message");
+    message.className = "message";
+
+    if (incomplete.length > 0) {
+      message.textContent = `⚠️ Please complete Row ${incomplete[0].index + 1}. Every row needs 1, 2, 3 and 4 once only.`;
+      message.classList.add("error");
+
+      document.getElementById(`status-${incomplete[0].index}`).scrollIntoView({
         behavior: "smooth",
         block: "center"
       });
+
+      return false;
     }
 
-    function createSurvey() {
-      const survey = document.getElementById("survey");
-      survey.innerHTML = "";
-
-      rows.forEach((row, rowIndex) => {
-        const rowCard = document.createElement("section");
-        rowCard.className = "row-card";
-
-        rowCard.innerHTML = `
-          <div class="row-header">
-            <div class="row-title">Row ${rowIndex + 1}</div>
-            <div class="row-status" id="status-${rowIndex}">Locked — select an engineer first</div>
-          </div>
-
-          <div class="groups">
-            ${row.map((words, colIndex) => `
-              <div class="group">
-                <div class="words">${words}</div>
-
-                <div class="rating-buttons">
-                  ${[1, 2, 3, 4].map(value => `
-                    <button
-                      type="button"
-                      class="rating"
-                      data-row="${rowIndex}"
-                      data-col="${colIndex}"
-                      data-value="${value}"
-                      onclick="selectRating(${rowIndex}, ${colIndex}, ${value})"
-                    >
-                      ${value}
-                    </button>
-                  `).join("")}
-                </div>
-              </div>
-            `).join("")}
-          </div>
-        `;
-
-        survey.appendChild(rowCard);
-      });
-
-      loadSaved();
-      updateDisplay();
-    }
-
-    function selectRating(rowIndex, colIndex, value) {
-      if (!engineerSelected()) {
-        showEngineerWarning();
-        return;
-      }
-
-      const currentValue = answers[rowIndex][colIndex];
-
-      if (currentValue === value) {
-        answers[rowIndex][colIndex] = null;
-        saveProgress();
-        updateDisplay();
-        return;
-      }
-
-      if (answers[rowIndex].includes(value)) {
-        showRowError(
-          rowIndex,
-          `Number ${value} has already been used in this row. Use each number once only.`
-        );
-        return;
-      }
-
-      answers[rowIndex][colIndex] = value;
-      saveProgress();
-      updateDisplay();
-    }
-
-    function updateDisplay() {
-      const hasEngineer = engineerSelected();
-
-      const warning = document.getElementById("engineerWarning");
-      warning.style.display = hasEngineer ? "none" : "block";
-
-      document.querySelectorAll("button.rating").forEach(button => {
-        const rowIndex = Number(button.dataset.row);
-        const colIndex = Number(button.dataset.col);
-        const value = Number(button.dataset.value);
-
-        const selectedValue = answers[rowIndex][colIndex];
-        const rowUsesValue = answers[rowIndex].includes(value);
-        const disabledByRow = rowUsesValue && selectedValue !== value;
-
-        button.classList.toggle("selected", selectedValue === value);
-        button.classList.toggle("used", disabledByRow);
-        button.classList.toggle("locked", !hasEngineer);
-
-        button.disabled = !hasEngineer || disabledByRow;
-      });
-
-      answers.forEach((row, rowIndex) => {
-        const status = document.getElementById(`status-${rowIndex}`);
-        const completed = row.every(value => value !== null);
-        const total = row.reduce((sum, value) => sum + (value || 0), 0);
-        const uniqueCount = new Set(row.filter(value => value !== null)).size;
-
-        status.classList.remove("complete", "error");
-
-        if (!hasEngineer) {
-          status.textContent = "Locked — select an engineer first";
-        } else if (!completed) {
-          status.textContent = `Incomplete — row total ${total}/10`;
-        } else if (total === 10 && uniqueCount === 4) {
-          status.textContent = "✅ Complete — row total 10/10";
-          status.classList.add("complete");
-        } else {
-          status.textContent = "⚠️ This row must use 1, 2, 3 and 4 once only";
-          status.classList.add("error");
-        }
-      });
-
-      updateTotals();
-      updateMainMessage();
-    }
-
-    function updateTotals() {
-      for (let col = 0; col < 4; col++) {
-        const total = answers.reduce((sum, row) => sum + (row[col] || 0), 0);
-        document.getElementById(`total-${col}`).textContent = total;
-      }
-    }
-
-    function updateMainMessage() {
-      const message = document.getElementById("main-message");
-      const completeRows = answers.filter(row => row.every(value => value !== null)).length;
-      const allComplete = completeRows === answers.length;
-
-      message.className = "message";
-
-      if (!engineerSelected()) {
-        message.textContent = "Select an engineer to unlock the survey.";
-        message.classList.add("error");
-      } else if (allComplete) {
-        message.textContent = "✅ Survey complete. Press Send to email the results.";
-        message.classList.add("ok");
-      } else {
-        message.textContent = `${completeRows}/5 rows complete. Each row must total 10.`;
-      }
-    }
-
-    function showRowError(rowIndex, text) {
-      const status = document.getElementById(`status-${rowIndex}`);
-      status.textContent = "⚠️ " + text;
-      status.classList.remove("complete");
-      status.classList.add("error");
-
-      setTimeout(updateDisplay, 1800);
-    }
-
-    function validateSurvey() {
-      if (!engineerSelected()) {
-        showEngineerWarning();
-        return false;
-      }
-
-      const incomplete = answers
-        .map((row, index) => ({ row, index }))
-        .filter(item => !item.row.every(value => value !== null));
-
-      const message = document.getElementById("main-message");
-      message.className = "message";
-
-      if (incomplete.length > 0) {
-        message.textContent = `⚠️ Please complete Row ${incomplete[0].index + 1}. Every row needs 1, 2, 3 and 4 once only.`;
-        message.classList.add("error");
-
-        document.getElementById(`status-${incomplete[0].index}`).scrollIntoView({
-          behavior: "smooth",
-          block: "center"
-        });
-
-        return false;
-      }
-
-      return true;
-    }
-
-    function buildEmailBody() {
-      const engineer = getSelectedEngineer();
-      const now = new Date();
-
-      const columnTotals = [0, 1, 2, 3].map(col => {
-        return answers.reduce((sum, row) => sum + (row[col] || 0), 0);
-      });
-
-      const columnNames = [
-        "🟥 Column 1 / Red",
-        "🟨 Column 2 / Yellow",
-        "🟦 Column 3 / Blue",
-        "🟩 Column 4 / Green"
-      ];
-
-      let body = "";
-
-      body += "COLOURED THINKING SURVEY RESULTS\n";
-      body += "=================================\n\n";
-      body += `Completed by: ${engineer}\n`;
-      body += `Completed on: ${now.toLocaleString()}\n\n`;
-
-      body += "COLUMN TOTALS\n";
-      body += "-------------\n";
-      body += `🟥 Red    / Column 1: ${columnTotals[0]}\n`;
-      body += `🟨 Yellow / Column 2: ${columnTotals[1]}\n`;
-      body += `🟦 Blue   / Column 3: ${columnTotals[2]}\n`;
-      body += `🟩 Green  / Column 4: ${columnTotals[3]}\n\n`;
-
-      body += "FULL SURVEY GRID\n";
-      body += "================\n";
-      body += "Each row should total 10.\n\n";
-
-      answers.forEach((row, rowIndex) => {
-        const rowTotal = row.reduce((sum, value) => sum + value, 0);
-
-        body += `ROW ${rowIndex + 1}  |  TOTAL: ${rowTotal}/10\n`;
-        body += "------------------------------------------------------------\n";
-
-        row.forEach((value, colIndex) => {
-          const words = rows[rowIndex][colIndex]
-            .replace(/<br\s*\/?>/gi, " / ")
-            .replace(/<[^>]+>/g, "");
-
-          body += `${columnNames[colIndex]}\n`;
-          body += `Score: ${value}\n`;
-          body += `${words}\n\n`;
-        });
-
-        body += "============================================================\n\n";
-      });
-
-      body += "KEY\n";
-      body += "---\n";
-      body += "4 = Most like you\n";
-      body += "3 = Quite like you\n";
-      body += "2 = Slightly like you\n";
-      body += "1 = Least like you\n";
-
-      return body;
-    }
-
-    function sendSurvey() {
-      if (!validateSurvey()) return;
-
-      const engineer = getSelectedEngineer();
-      const subject = `Coloured Thinking Survey Results - ${engineer}`;
-      const body = buildEmailBody();
-
-      const mailtoLink =
-        `mailto:${encodeURIComponent(resultsEmailAddress)}` +
-        `?subject=${encodeURIComponent(subject)}` +
-        `&body=${encodeURIComponent(body)}`;
-
-      window.location.href = mailtoLink;
-
-      const message = document.getElementById("main-message");
-      message.className = "message ok";
-      message.textContent = "✅ Your email app should now open with the completed results. Please press Send in the email app.";
-    }
-
-    function saveProgress() {
-      localStorage.setItem("colouredThinkingAnswers", JSON.stringify(answers));
-      localStorage.setItem("colouredThinkingEngineer", getSelectedEngineer());
-    }
-
-    function loadSaved() {
-      try {
-        const savedEngineer = localStorage.getItem("colouredThinkingEngineer");
-
-        if (savedEngineer) {
-          document.getElementById("engineerSelect").value = savedEngineer;
-        }
-
-        const savedAnswers = JSON.parse(localStorage.getItem("colouredThinkingAnswers"));
-
-        if (Array.isArray(savedAnswers) && savedAnswers.length === answers.length) {
-          savedAnswers.forEach((row, rowIndex) => {
-            if (Array.isArray(row) && row.length === 4) {
-              answers[rowIndex] = row.map(value => [1, 2, 3, 4].includes(value) ? value : null);
-            }
-          });
-        }
-      } catch (error) {
-        console.warn("Could not load saved progress", error);
-      }
-    }
-
-    function resetSurvey() {
-      if (!confirm("Clear all answers and start again?")) return;
-
-      answers.forEach((row, rowIndex) => {
-        answers[rowIndex] = [null, null, null, null];
-      });
-
-      document.getElementById("engineerSelect").value = "";
-
-      localStorage.removeItem("colouredThinkingAnswers");
-      localStorage.removeItem("colouredThinkingEngineer");
-
-      updateDisplay();
-    }
-
-    document.getElementById("engineerSelect").addEventListener("change", () => {
-      saveProgress();
-      updateDisplay();
+    return true;
+  }
+
+  function buildEmailBody() {
+    const engineer = getSelectedEngineer();
+    const now = new Date();
+
+    const columnTotals = [0, 1, 2, 3].map(col => {
+      return answers.reduce((sum, row) => sum + (row[col] || 0), 0);
     });
 
-    createSurvey();
-  </script>
-</body>
-</html>
+    const columnNames = [
+      "🟥 Column 1 / Red",
+      "🟨 Column 2 / Yellow",
+      "🟦 Column 3 / Blue",
+      "🟩 Column 4 / Green"
+    ];
+
+    let body = "";
+
+    body += "COLOURED THINKING SURVEY RESULTS\n";
+    body += "=================================\n\n";
+    body += `Completed by: ${engineer}\n`;
+    body += `Completed on: ${now.toLocaleString()}\n\n`;
+
+    body += "COLUMN TOTALS\n";
+    body += "-------------\n";
+    body += `🟥 Red    / Column 1: ${columnTotals[0]}\n`;
+    body += `🟨 Yellow / Column 2: ${columnTotals[1]}\n`;
+    body += `🟦 Blue   / Column 3: ${columnTotals[2]}\n`;
+    body += `🟩 Green  / Column 4: ${columnTotals[3]}\n\n`;
+
+    body += "FULL SURVEY GRID\n";
+    body += "================\n";
+    body += "Each row should total 10.\n\n";
+
+    answers.forEach((row, rowIndex) => {
+      const rowTotal = row.reduce((sum, value) => sum + value, 0);
+
+      body += `ROW ${rowIndex + 1}  |  TOTAL: ${rowTotal}/10\n`;
+      body += "------------------------------------------------------------\n";
+
+      row.forEach((value, colIndex) => {
+        const words = rows[rowIndex][colIndex]
+          .replace(/<br\s*\/?>/gi, " / ")
+          .replace(/<[^>]+>/g, "");
+
+        body += `${columnNames[colIndex]}\n`;
+        body += `Score: ${value}\n`;
+        body += `${words}\n\n`;
+      });
+
+      body += "============================================================\n\n";
+    });
+
+    body += "KEY\n";
+    body += "---\n";
+    body += "4 = Most like you\n";
+    body += "3 = Quite like you\n";
+    body += "2 = Slightly like you\n";
+    body += "1 = Least like you\n";
+
+    return body;
+  }
+
+  function sendSurvey() {
+    if (!validateSurvey()) return;
+
+    const engineer = getSelectedEngineer();
+    const subject = `Coloured Thinking Survey Results - ${engineer}`;
+    const body = buildEmailBody();
+
+    const mailtoLink =
+      `mailto:${encodeURIComponent(resultsEmailAddress)}` +
+      `?subject=${encodeURIComponent(subject)}` +
+      `&body=${encodeURIComponent(body)}`;
+
+    window.location.href = mailtoLink;
+
+    const message = document.getElementById("main-message");
+    message.className = "message ok";
+    message.textContent = "✅ Your email app should now open with the completed results. Please press Send in the email app.";
+  }
+
+  function saveProgress() {
+  // Progress is intentionally not saved.
+  // Each page load starts a fresh survey.
+}
+
+  function loadSaved() {
+    try {
+      const savedEngineer = localStorage.getItem("colouredThinkingEngineer");
+
+      if (savedEngineer) {
+        document.getElementById("engineerSelect").value = savedEngineer;
+      }
+
+      const savedAnswers = JSON.parse(localStorage.getItem("colouredThinkingAnswers"));
+
+      if (Array.isArray(savedAnswers) && savedAnswers.length === answers.length) {
+        savedAnswers.forEach((row, rowIndex) => {
+          if (Array.isArray(row) && row.length === 4) {
+            answers[rowIndex] = row.map(value => [1, 2, 3, 4].includes(value) ? value : null);
+          }
+        });
+      }
+    } catch (error) {
+      console.warn("Could not load saved progress", error);
+    }
+  }
+
+  function resetSurvey() {
+    if (!confirm("Clear all answers and start again?")) return;
+
+    answers.forEach((row, rowIndex) => {
+      answers[rowIndex] = [null, null, null, null];
+    });
+
+    document.getElementById("engineerSelect").value = "";
+
+    localStorage.removeItem("colouredThinkingAnswers");
+    localStorage.removeItem("colouredThinkingEngineer");
+
+    updateDisplay();
+  }
+
+  document.getElementById("engineerSelect").addEventListener("change", () => {
+    saveProgress();
+    updateDisplay();
+  });
+
+  createSurvey();
+</script>
